@@ -18,5 +18,6 @@ COPY . .
 EXPOSE 8000
 
 # Producción con Gunicorn
-CMD ["gunicorn", "tu_proyecto.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "project.wsgi:application", "--bind", "0.0.0.0:8000"]
+
 
