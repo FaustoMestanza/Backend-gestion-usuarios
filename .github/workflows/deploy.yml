@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:   # Permite ejecutar manualmente el workflow desde GitHub Actions
 
 jobs:
   build-and-push:
@@ -23,4 +24,3 @@ jobs:
         run: |
           docker build -t faustomestanza/microservicio-usuarios:latest .
           docker push faustomestanza/microservicio-usuarios:latest
-
