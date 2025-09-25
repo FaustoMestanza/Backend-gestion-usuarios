@@ -1,4 +1,4 @@
-name: Build and Deploy to Azure App Service
+name: Build and Push to Docker Hub
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,8 +24,3 @@ jobs:
           docker build -t faustomestanza/microservicio-usuarios:latest .
           docker push faustomestanza/microservicio-usuarios:latest
 
-      - name: Deploy to Azure WebApp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: "microservicio-usuarios" # nombre exacto en Azure
-          images: "faustomestanza/microservicio-usuarios:latest"
