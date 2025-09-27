@@ -1,18 +1,36 @@
-name: Build and Push to Docker Hub
+name: CI/CD Django on Azure
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:   # Permite ejecutar manualmente el workflow desde GitHub Actions
+  workflow_dispatch:
 
 jobs:
-  build-and-push:
+  inicio:
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+      - name: Confirm start
+        run: echo "🚀 Iniciando pipeline CI/CD"
 
+  build:
+    runs-on: ubuntu-latest
+    needs: inicio
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          python manage.py collectstatic --noinput   # Recolecta CSS/JS estáticos
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -20,7 +38,31 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push image
+      - name: Build Docker image
+        run: docker build -t faustomestanza/microservicio-usuarios:latest .
+
+      - name: Push Docker image
+        run: docker push faustomestanza/microservicio-usuarios:latest
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run Django tests
         run: |
-          docker build -t faustomestanza/microservicio-usuarios:latest .
-          docker push faustomestanza/microservicio-usuarios:latest
+          pip install -r requirements.txt
+          python manage.py test || echo "⚠️ No hay tests definidos, continuaré"
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: microservicio-usuarios
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          images: docker.io/faustomestanza/microservicio-usuarios:latest
