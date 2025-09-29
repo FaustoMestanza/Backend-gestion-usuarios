@@ -7,17 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  inicio:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-      - name: Confirm start
-        run: echo "🚀 Iniciando pipeline CI/CD"
-
   build:
     runs-on: ubuntu-latest
-    needs: inicio
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -28,9 +19,7 @@ jobs:
           python-version: '3.12'
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-          python manage.py collectstatic --noinput   # Recolecta CSS/JS estáticos
+        run: pip install -r requirements.txt
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
