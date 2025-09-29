@@ -24,11 +24,12 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copiar el código del proyecto
 COPY . .
 
-# Ejecutar collectstatic (importante para los CSS/JS de Django Admin)
-RUN python manage.py collectstatic --noinput
+# Copiar entrypoint y darle permisos de ejecución
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 # Exponer el puerto (Gunicorn servirá en 8000)
 EXPOSE 8000
 
-# Comando para producción con Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "project.wsgi:application"]
+# Usar el entrypoint que correrá migraciones y luego levanta Gunicorn
+ENTRYPOINT ["/app/entrypoint.sh"]
