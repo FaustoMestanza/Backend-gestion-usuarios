@@ -3,7 +3,7 @@
 set -e  # Detener ejecución si algún comando falla
 
 # Aplicar migraciones antes de levantar el servidor
-echo "📦 Ejecutando migraciones..."
+echo " Ejecutando migraciones..."
 python manage.py migrate --noinput
 
 # Colectar estáticos (por si acaso)
