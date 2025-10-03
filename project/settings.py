@@ -15,6 +15,7 @@ from pathlib import Path
 import os
 import dj_database_url
 from dotenv import load_dotenv
+import sys
 
 # Cargar variables del archivo .env
 load_dotenv()
@@ -98,6 +99,14 @@ DATABASES = {
     )
     
 }
+
+if "test" in sys.argv:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": ":memory:",   # Base de datos en memoria (más rápido y sin depender de Postgres)
+        }
+    }
 
 LOGGING = {
     "version": 1,
