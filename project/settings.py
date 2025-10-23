@@ -177,7 +177,7 @@ REST_FRAMEWORK = {
     # Por defecto, todo requiere estar autenticado.
     # (Luego podrás abrir endpoints concretos con AllowAny en la vista)
     "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticated",
+        'rest_framework.permissions.AllowAny',
     ),
 }
 
