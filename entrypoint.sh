@@ -1,44 +1,31 @@
 #!/bin/bash
-# entrypoint.sh
-set -e  # Detiene la ejecución si algún comando falla
+set -e
 
-# ---------------------------------------------
-# 1️Aplicar migraciones antes de levantar el servidor
-# ---------------------------------------------
 echo " Ejecutando migraciones..."
 python manage.py migrate --noinput
 
-# ---------------------------------------------
-#  Recolectar archivos estáticos
-# ---------------------------------------------
 echo "Recolectando archivos estáticos..."
 python manage.py collectstatic --noinput
 
-# ---------------------------------------------
-# Crear superusuario automáticamente (si no existe)
-# ---------------------------------------------
-if [ "$DJANGO_SUPERUSER_CEDULA" ] && [ "$DJANGO_SUPERUSER_PASSWORD" ]; then
-    echo "Creando superusuario por defecto (si no existe)..."
-    python manage.py shell << END
+echo "Verificando superusuario..."
+python << 'EOF'
 from django.contrib.auth import get_user_model
 User = get_user_model()
-cedula = "${DJANGO_SUPERUSER_CEDULA}"
-password = "${DJANGO_SUPERUSER_PASSWORD}"
+cedula = "1719373001"
+password = "Thomilia2302"
 if not User.objects.filter(cedula=cedula).exists():
-    User.objects.create_superuser(
+    print("Creando superusuario...")
+    u = User.objects.create_superuser(
         cedula=cedula,
-        password=password,
-        first_name="Admin",
-        last_name="Principal"
+        username=cedula,
+        password=password
     )
-    print(f"Superusuario creado correctamente con cédula {cedula}")
 else:
-    print(f"El superusuario con cédula {cedula} ya existe, no se crea otro.")
-END
-fi
+    print("Superusuario ya existe, actualizando contraseña...")
+    u = User.objects.get(cedula=cedula)
+    u.set_password(password)
+    u.save()
+EOF
 
-# ---------------------------------------------
-# 4️⃣ Arrancar Gunicorn
-# ---------------------------------------------
 echo "Iniciando Gunicorn..."
-exec gunicorn project.wsgi:application --bind 0.0.0.0:8000 --workers 3
+exec gunicorn project.wsgi:application --bind 0.0.0.0:8000
