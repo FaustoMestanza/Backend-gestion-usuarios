@@ -4,13 +4,13 @@ FROM python:3.12-slim
 # Establecer directorio de trabajo
 WORKDIR /app
 
-# Evitar que Python genere archivos .pyc y mejorar logs
+# Evitar archivos .pyc y mejorar logs
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV DJANGO_SETTINGS_MODULE=project.settings
 ENV DJANGO_DEBUG=0
 
-# Instalar dependencias del sistema necesarias para psycopg2, Pillow, etc.
+# Instalar dependencias del sistema
 RUN apt-get update && apt-get install -y \
     build-essential \
     libpq-dev \
@@ -21,17 +21,15 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar el código del proyecto
+# Copiar código del proyecto
 COPY . .
 
-# Copiar entrypoint y darle permisos de ejecución
+# Copiar y dar permisos al entrypoint
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
-# Exponer el puerto (Gunicorn servirá en 8000)
+# Exponer el puerto de Gunicorn
 EXPOSE 8000
-# Asegurar permisos de ejecución del entrypoint
-RUN chmod +x /app/entrypoint.sh
 
-# Usar el entrypoint que correrá migraciones y luego levanta Gunicorn
+# Ejecutar entrypoint
 ENTRYPOINT ["/app/entrypoint.sh"]
