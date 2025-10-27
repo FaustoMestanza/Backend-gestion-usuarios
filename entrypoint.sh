@@ -11,12 +11,12 @@ echo "Recolectando archivos estáticos..."
 python manage.py collectstatic --noinput
 
 # Crear superusuario automáticamente (si no existe)
-if [ "$DJANGO_SUPERUSER_USERNAME" ] && [ "$DJANGO_SUPERUSER_PASSWORD" ] && [ "$DJANGO_SUPERUSER_EMAIL" ]; then
+if [ "$DJANGO_SUPERUSER_USERNAME" ] && [ "$DJANGO_SUPERUSER_PASSWORD" ] ; then
     echo "Creando superusuario por defecto..."
     python manage.py createsuperuser \
         --noinput \
-        --username "$DJANGO_SUPERUSER_USERNAME" \
-        --email "$DJANGO_SUPERUSER_EMAIL" || true
+        --username "$DJANGO_SUPERUSER_USERNAME" || true
+        
 fi
 
 # Arrancar Gunicorn
