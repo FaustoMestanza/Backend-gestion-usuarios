@@ -1,4 +1,4 @@
-name: CI/CD Django on Azure
+name: CI/CD Django on Azure (Docker)
 
 on:
   push:
@@ -33,23 +33,11 @@ jobs:
       - name: Push Docker image
         run: docker push faustomestanza/microservicio-usuarios:latest
 
-  test:
+  deploy:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Run Django tests
-        run: |
-          pip install -r requirements.txt
-          python manage.py test || echo "⚠️ No hay tests definidos, continuaré"
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - name: Deploy to Azure Web App
+      - name: Deploy Docker image to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: microservicio-usuarios

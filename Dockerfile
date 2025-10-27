@@ -30,6 +30,8 @@ RUN chmod +x /app/entrypoint.sh
 
 # Exponer el puerto (Gunicorn servirá en 8000)
 EXPOSE 8000
+# Asegurar permisos de ejecución del entrypoint
+RUN chmod +x /app/entrypoint.sh
 
 # Usar el entrypoint que correrá migraciones y luego levanta Gunicorn
 ENTRYPOINT ["/app/entrypoint.sh"]
