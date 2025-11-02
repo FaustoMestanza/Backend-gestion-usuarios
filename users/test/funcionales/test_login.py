@@ -1,36 +1,35 @@
 # users/tests/unitarias/test_models_user.py
+# users/test/funcionales/test_login.py
 from django.test import TestCase
 from users.models import User, Rol
-from django.core.exceptions import ValidationError
+from rest_framework.test import APIClient
+from rest_framework import status
+from django.urls import reverse
 
-class RolModelTest(TestCase):
-    def test_creacion_rol(self):
-        rol = Rol.objects.create(nombre="DOCENTE", descripcion="Rol docente")
-        self.assertEqual(str(rol), "DOCENTE")
-        self.assertEqual(rol.descripcion, "Rol docente")
 
-class UserModelTest(TestCase):
+class LoginAPITest(TestCase):
+    """Pruebas funcionales del login y autenticación"""
+
     def setUp(self):
-        self.rol_estudiante = Rol.objects.create(nombre="ESTUDIANTE")
-        self.rol_docente = Rol.objects.create(nombre="DOCENTE")
-
-    def test_crear_usuario_estudiante_con_curso(self):
-        usuario = User.objects.create(
-            username="test1",
+        self.client = APIClient()
+        self.rol = Rol.objects.create(nombre="DOCENTE")
+        self.user = User.objects.create_user(
+            username="fausto",
             cedula="1234567890",
-            rol=self.rol_estudiante,
-            curso="10mo A"
+            password="12345",
+            rol=self.rol
         )
-        self.assertEqual(usuario.curso, "10mo A")
+        self.login_url = reverse('auth-login')
 
-    def test_error_usuario_docente_con_curso(self):
-        """Debe lanzar error si un docente tiene campo curso lleno"""
-        usuario = User(
-            username="test2",
-            cedula="0987654321",
-            rol=self.rol_docente,
-            curso="10mo B"
-        )
-        with self.assertRaises(ValidationError):
-            usuario.full_clean()
-#
+    def test_login_correcto(self):
+        """Debe autenticar correctamente al usuario"""
+        data = {"cedula": "1234567890", "password": "12345"}
+        response = self.client.post(self.login_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("access", response.data)
+
+    def test_login_incorrecto(self):
+        """Debe fallar si las credenciales son incorrectas"""
+        data = {"cedula": "9999999999", "password": "wrong"}
+        response = self.client.post(self.login_url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
