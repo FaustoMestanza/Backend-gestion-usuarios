@@ -20,10 +20,10 @@ class User(AbstractUser):
         db_index=True,
         validators=[RegexValidator(r'^\d{10}$', 'La cédula debe tener 10 dígitos.')]
     )
-    # Solo aplica a estudiantes. Opcional.
+    # Solo aplica a estudiantes. 
     curso = models.CharField(max_length=50, null=True, blank=True)
 
-    # FK a Rol (por ahora PERMITE nulos para poder crear el superusuario sin error)
+    # FK a Rol 
     rol = models.ForeignKey(
         Rol,
         on_delete=models.PROTECT,
