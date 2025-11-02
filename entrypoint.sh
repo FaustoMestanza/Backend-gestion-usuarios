@@ -6,7 +6,7 @@ echo "🚀 Ejecutando migraciones..."
 python manage.py migrate --noinput
 
 echo "📦 Recolectando archivos estáticos..."
-=======
+
 echo "Ejecutando migraciones..."
 python manage.py migrate --noinput
 
