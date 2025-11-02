@@ -42,12 +42,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-<<<<<<< HEAD
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-          python manage.py test || echo "⚠️ No hay tests definidos, continuaré"
-=======
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -58,7 +52,6 @@ jobs:
 
       - name: Run Django tests
         run: python manage.py test users.tests
->>>>>>> ac3c381 (Agrego pruebas unitarias y funcionales + configuración CI/CD en GitHub Actions)
 
   deploy:
     runs-on: ubuntu-latest
