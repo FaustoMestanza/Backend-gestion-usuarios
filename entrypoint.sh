@@ -1,17 +1,10 @@
 #!/bin/bash
 set -e
 
-
 echo "🚀 Ejecutando migraciones..."
 python manage.py migrate --noinput
 
 echo "📦 Recolectando archivos estáticos..."
-
-echo "Ejecutando migraciones..."
-python manage.py migrate --noinput
-
-echo " Recolectando archivos estáticos..."
-
 python manage.py collectstatic --noinput
 
 echo "👑 Verificando superusuario..."
@@ -32,10 +25,7 @@ u, created = User.objects.get_or_create(
 u.set_password('Thomilia2302')
 u.save()
 
-
 print('✅ Superusuario creado o actualizado correctamente.' if created else '🔁 Superusuario ya existía y fue actualizado.')
-
-
 EOF
 
 echo "🔥 Iniciando Gunicorn..."
