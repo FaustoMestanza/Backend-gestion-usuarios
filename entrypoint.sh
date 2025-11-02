@@ -34,8 +34,8 @@ u.save()
 
 
 print('✅ Superusuario creado o actualizado correctamente.' if created else '🔁 Superusuario ya existía y fue actualizado.')
-=======
-print('Superusuario creado o actualizado correctamente.' if created else '🔁 Superusuario ya existía y fue actualizado.')
+
+
 EOF
 
 echo "🔥 Iniciando Gunicorn..."
