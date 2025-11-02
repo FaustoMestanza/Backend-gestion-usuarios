@@ -28,9 +28,9 @@ class UserViewSet(viewsets.ModelViewSet):
         queryset = super().get_queryset()
         rol = self.request.query_params.get('rol')
         if rol:
-<<<<<<< HEAD
+
             queryset = queryset.filter(rol__nombre__iexact=rol)  # 👈 adaptado a tu modelo
-=======
+
             queryset = queryset.filter(rol__nombre__iexact=rol)  
->>>>>>> ac3c381 (Agrego pruebas unitarias y funcionales + configuración CI/CD en GitHub Actions)
+
         return queryset
